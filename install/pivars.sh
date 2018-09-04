@@ -1,0 +1,10 @@
+#!/bin/bash 
+PROJECT_NAME=pipapi
+DEPLOY_FOLDER=/opt/$PROJECT_NAME
+SERVICES_LIST=simpleDHTtracker
+PI_USER=pi
+PI_IPNAME=pi32
+PI_PORT=22
+
+
+
