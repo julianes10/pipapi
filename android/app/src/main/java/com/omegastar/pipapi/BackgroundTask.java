@@ -145,7 +145,7 @@ public class BackgroundTask extends IntentService {
         if(t != "")
             intent.putExtra("TEMP", t);
         if(h != "")
-            intent.putExtra("HUM", t);
+            intent.putExtra("HUM", h);
 
         broadcaster.sendBroadcast(intent);
     }
