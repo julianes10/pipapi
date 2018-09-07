@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">pipapi</string>
+    <string name="edit_message">Ip or name of the service</string>
+    <string name="button_carname">Check</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
