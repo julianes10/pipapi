@@ -28,6 +28,19 @@ public class BackgroundTask extends IntentService {
         if (dd) Log.d("PIPAPI","Starting");
     }
 
+    private class ResponseDht {
+        boolean ok;
+        String t;
+        String h;
+        ResponseDht(){ok=false; t = "--"; h="--";}
+    }
+
+    private class ResponseKodi {
+        boolean ok;
+        String jsonResponse;
+        ResponseKodi(){ok=false;jsonResponse="";}
+    }
+
 
     /**
      * The IntentService calls this method from the default worker thread with
@@ -37,91 +50,92 @@ public class BackgroundTask extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (dd) Log.d("PIPAPI", "onHandleIntent-enter");
-        URL url;
-        HttpURLConnection urlConnection = null;
-        String result="KO";
-        String t="--";
-        String h="--";
-        try {
-            Bundle b = intent.getExtras();
+        Bundle b = intent.getExtras();
 
-            String rest="";
+        String ip = b.getString("IP");
+
+        if (intent.getAction().equals("REFRESH")) {
+
+            ResponseDht dht = queryDht(ip, ":5056/api/v1.0/dht/", "sensors/now", null, null);
+            sendResultDhtUI(dht.ok,dht.t,dht.h);
+            ResponseKodi kodi = queryKodi(ip, ":5057/api/v1.0/kodi/", "status", null, null);
+            sendResultKodiUI(kodi.ok,kodi.jsonResponse);
+            //TODO queryPir(); sendResultKodiUI(kodi.ok,kodi.jsonResponse);
+        }
+        else
+        {
+            //TODO
+            String rest = "";
             String tag = "";
             String value = "";
-
-            String ip = b.getString("IP");
             rest = b.getString("rest");
             try {
                 tag = b.getString("tag");
                 value = b.getString("value");
-            }  catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 if (d) Log.d("PIPAPI", "no tar or value");
             }
+        }
 
-            url = new URL("http://" + ip + ":5056/api/v1.0/dht/" + rest);
+        if (dd) Log.d("PIPAPI", "onHandleIntent-exit");
+    }
+
+    //":5056/api/v1.0/dht/"
+    protected String sendQuery (String ip, String apibase, String rest, String tag, String value) {
+        String rt=null;
+        URL url;
+        HttpURLConnection urlConnection = null;
+        try {
+            url = new URL("http://" + ip + apibase + rest);
             urlConnection = (HttpURLConnection) url.openConnection();
-
-            if (tag != null && !tag.isEmpty()) {
-               // POST
+            // set the connection timeout to 5 seconds and the read timeout to 10 seconds
+            urlConnection.setConnectTimeout(10000);
+            urlConnection.setReadTimeout(15000);
+            if ((urlConnection != null) && (tag != null && !tag.isEmpty())) {
+                // POST
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
                 urlConnection.setInstanceFollowRedirects(false);
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json");
                 //urlConnection.setRequestProperty("Content-Length", "" + Integer.toString(otherParametersUrServiceNeed.getBytes().length));
-                urlConnection.setUseCaches (false);
-
+                urlConnection.setUseCaches(false);
                 urlConnection.connect();
                 JSONObject jsonParam = new JSONObject();
                 jsonParam.put(tag, value);
-                if (d) Log.d("PIPAPI", "POST IP:"+ip+" " + rest + " " + tag + " " + value );
-
+                if (d)
+                    Log.d("PIPAPI", "POST IP:" + ip + " " + apibase + rest + " " + tag + " " + value);
                 DataOutputStream printout = new DataOutputStream(urlConnection.getOutputStream());
                 printout.writeBytes(jsonParam.toString());
-                printout.flush ();
-                printout.close ();
-            }
-            else {
-                if (d) Log.d("PIPAPI", "GET IP:"+ip+" " + rest);
+                printout.flush();
+                printout.close();
+            } else {
+                if (d) Log.d("PIPAPI", "GET IP:" + ip + " " + rest);
             }
 
-            StringBuilder translateResult = new StringBuilder(200);
-            try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                char[] buffer = new char[8192];
-                int charsRead;
-                while ((charsRead = in.read
-                        (buffer)) > 0) {
-                    translateResult.append(buffer, 0, charsRead);
-                }
-                if (dd) Log.d("PIPAPI","response:"+ translateResult.toString());
-            } catch (Exception e) {
-                if (d) Log.d("PIPAPI", "Exception" + e.getLocalizedMessage());
-            }
-            //Process json
-            try {
-                if (dd) Log.d("PIPAPI","response in raw chars:"+ translateResult.toString());
-                JSONObject object;
-                if (rest.contains("sensors")){
-                    if (dd) Log.d("PIPAPI","ARRAY is expected");
-                    JSONArray jsonarray = new JSONArray(translateResult.toString());
-                    //Only get 1st one, TODO manage all if use case really
-                    object = jsonarray.getJSONObject(0);
-                    if (dd) Log.d("PIPAPI","First item:"+ object.toString());
-                    t = object.getString("temperature");
-                    h = object.getString("humidity");
-                    result = "OK";
-                }
-                else {
-                    if (dd) Log.d("PIPAPI","OBJECT is expected");
-                    object = new JSONObject(translateResult.toString());
-                    result = object.getString("result");
-                }
-                if (dd) Log.d("PIPAPI","response json:"+ object.toString());
+            if (urlConnection != null) {
 
-            } catch (Exception e) {
-                if (d) Log.d("PIPAPI","Exception "+ e.getLocalizedMessage());
+                StringBuilder translateResult = new StringBuilder(200);
+                try {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    char[] buffer = new char[8192];
+                    int charsRead;
+                    while ((charsRead = in.read
+                            (buffer)) > 0) {
+                        translateResult.append(buffer, 0, charsRead);
+                    }
+                    if (dd) Log.d("PIPAPI", "response:" + translateResult.toString());
+                } catch (Exception e) {
+                    if (d) Log.d("PIPAPI", "Exception" + e.getLocalizedMessage());
+                }
+                //Process json
+                try {
+                    if (dd) Log.d("PIPAPI", "response in raw chars:" + translateResult.toString());
+                    rt = translateResult.toString();
+                } catch (Exception e) {
+                    if (d) Log.d("PIPAPI", "Exception " + e.getLocalizedMessage());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,25 +145,104 @@ public class BackgroundTask extends IntentService {
                 urlConnection.disconnect();
             }
         }
-        sendResultUI(result,t,h);
-        if (dd) Log.d("PIPAPI", "onHandleIntent-exit");
+        return rt;
+    }
+    protected void queryPir() {
+    }
+    protected ResponseKodi queryKodi(String ip, String apibase, String rest, String tag, String value) {
+
+        if (dd) Log.d("PIPAPI", "queryKodi");
+        ResponseKodi rt=new ResponseKodi();
+        try {
+            String response = this.sendQuery(ip, apibase, rest, tag, value);
+            if (response != null  && !response.equals("")) {
+                JSONObject object;
+                if (rest.contains("status")) {
+                    if (dd) Log.d("PIPAPI", "JSON status" + response);
+                    object = new JSONObject(response);
+                    if (object.getString("result").equals("OK")) {
+                        rt.ok = true;
+                        rt.jsonResponse = response;
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            if (d) Log.d("PIPAPI", "queryKodi-exception");
+        }
+        return rt;
+    }
+    protected ResponseDht queryDht(String ip, String apibase, String rest, String tag, String value) {
+        if (dd) Log.d("PIPAPI", "queryDhtr");
+        ResponseDht rt=new ResponseDht();
+        try {
+            String response = this.sendQuery(ip, apibase, rest, tag, value);
+            if (response != null  && !response.equals("")) {
+                JSONObject object;
+                if (rest.contains("sensors")) {
+                    if (dd) Log.d("PIPAPI", "ARRAY is expected");
+                    JSONArray jsonarray = new JSONArray(response);
+                    //Only get 1st one, TODO manage all if use case really
+                    object = jsonarray.getJSONObject(0);
+                    if (dd) Log.d("PIPAPI", "First item:" + object.toString());
+                    rt.t = object.getString("temperature");
+                    rt.h = object.getString("humidity");
+                    rt.ok = true;
+                } else {
+                    if (dd) Log.d("PIPAPI", "OBJECT is expected");
+                    object = new JSONObject(response);
+                    rt.ok = (object.getString("result") == "OK");
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            if (d) Log.d("PIPAPI", "queryDht-exception");
+        }
+        return rt;
     }
 
 
-    public void sendResultUI(String r,String t , String h) {
-        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
-        if (d) Log.d("PIPAPI", "sendResultUI:" +r + " " + t + " " + h);
-        Intent intent = new Intent("COM_RESULT");
-        if(r != "")
-            intent.putExtra("RESULT", r);
+    public void sendResultKodiUI(boolean r,String res) {
+        if (d) Log.d("PIPAPI", "sendResultKodiUI:" + r );
+        Intent intent = new Intent("REFRESH_KODI");
+        if(r){
+            intent.putExtra("RESULT", "OK");
+            if (d) Log.d("PIPAPI", "sendResultKodiUI:" + res );
+            intent.putExtra("JSON", res);
+        }else {
+            intent.putExtra("RESULT", "KO");
+        }
+
+        sendResultUI(intent);
+    }
+
+    public void sendResultDhtUI(boolean r,String t , String h) {
+        if (d) Log.d("PIPAPI", "sendResultDhtUI:" +r + " " + t + " " + h);
+        Intent intent = new Intent("REFRESH_DHT");
+        if(r){
+            intent.putExtra("RESULT", "OK");
+        }else {
+            intent.putExtra("RESULT", "KO");
+        }
+
         if(t != "")
             intent.putExtra("TEMP", t);
         if(h != "")
             intent.putExtra("HUM", h);
 
+        sendResultUI(intent);
+    }
+
+    public void sendResultUI(Intent intent) {
+        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
+        if (d) Log.d("PIPAPI", "sendResultUI:");
         broadcaster.sendBroadcast(intent);
     }
 }
+
+
 
 
 

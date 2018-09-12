@@ -7,21 +7,102 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="89dp">
 
+    <ProgressBar
+        android:id="@+id/pbComKodi"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvPlayerTitle"
+        app:layout_constraintEnd_toStartOf="@+id/comResultKodi"
+        app:layout_constraintTop_toBottomOf="@+id/tvHum" />
+
     <TextView
-        android:id="@+id/tvHum"
+        android:id="@+id/comResultKodi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
+        android:background="@android:color/darker_gray"
+        android:text="    "
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView6"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="    " />
+
+    <TextView
+        android:id="@+id/tvPlayerTitle"
+        android:layout_width="260dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/fancytextbox"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
         android:text="--"
-        android:textColor="#24fc03"
-        android:textSize="45sp"
+        android:textColor="@android:color/background_light"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:fontFamily="monospace"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvPlayOn"
+        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        tools:text="--" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Playing Title"
+        app:layout_constraintEnd_toEndOf="@+id/tvPlayerTitle"
+        app:layout_constraintStart_toStartOf="@+id/tvPlayerTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvTemp" />
+
+    <TextView
+        android:id="@+id/tvPlayOn"
+        android:layout_width="45dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/fancytextbox"
+        android:gravity="center"
+        android:text="--"
+        android:textColor="@android:color/background_light"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:fontFamily="monospace"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        tools:text="--" />
+
+    <TextView
+        android:id="@+id/tvHum"
+        android:layout_width="140dp"
+        android:layout_height="70dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/fancytextbox"
+        android:gravity="center"
+        android:text="--"
+        android:textColor="#24fc03"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        app:fontFamily="monospace"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tvTemp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvTemp"
-        app:layout_constraintTop_toBottomOf="@+id/etIp"
         tools:text="--" />
 
     <EditText
@@ -48,6 +129,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:gravity="center"
         android:onClick="apply"
         android:text="@string/button_carname"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,45 +138,47 @@
 
 
     <TextView
-        android:id="@+id/comResult"
+        android:id="@+id/comResultDht"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
         android:background="@android:color/darker_gray"
         android:text="    "
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="    " />
 
     <ProgressBar
-        android:id="@+id/pbCom"
+        android:id="@+id/pbComDht"
         style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/comResult" />
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvHum"
+        app:layout_constraintEnd_toStartOf="@+id/comResultDht"
+        app:layout_constraintTop_toBottomOf="@+id/btApply" />
 
 
     <TextView
         android:id="@+id/tvTemp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_width="161dp"
+        android:layout_height="68dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/fancytextbox"
+        android:gravity="center"
         android:text="--"
         android:textColor="@color/comOnprogress"
-        android:textSize="45sp"
+        android:textSize="40sp"
         android:textStyle="bold"
         app:fontFamily="monospace"
-        app:layout_constraintEnd_toStartOf="@+id/tvHum"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/etIp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         tools:text="--" />
 
 
@@ -110,6 +194,87 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="Temperature"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etIp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:text="Humidity"
+        app:layout_constraintBottom_toTopOf="@+id/tvHum"
+        app:layout_constraintStart_toStartOf="@+id/tvHum" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <android.support.constraint.Group
+        android:id="@+id/group2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Player"
+        app:layout_constraintStart_toStartOf="@+id/tvPlayOn"
+        app:layout_constraintTop_toBottomOf="@+id/tvTemp" />
+
+    <android.support.constraint.Group
+        android:id="@+id/group3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <android.support.constraint.Group
+        android:id="@+id/group4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintGuide_begin="20dp" />
 
 </android.support.constraint.ConstraintLayout>
