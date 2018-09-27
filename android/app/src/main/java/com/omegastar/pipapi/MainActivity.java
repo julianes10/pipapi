@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.json.JSONObject;
@@ -29,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private String ip;
 
     private void setIp () {
-        EditText editText = (EditText) findViewById(R.id.etIp);
+        EditText editText = (EditText) findViewById(R.id.keyString1);
         this.ip = editText.getText().toString();
     }
 
@@ -191,6 +190,12 @@ public class MainActivity extends AppCompatActivity {
         updatePb("START",R.id.comResultDht,R.id.pbComDht);
         updatePb("START",R.id.comResultKodi,R.id.pbComKodi);
 
+    }
+
+    public void showTracker(View view) {
+        Intent intent = new Intent(this, TrackerForm.class);
+        intent.putExtra("IP", ip);
+        startActivity(intent);
     }
 }
 

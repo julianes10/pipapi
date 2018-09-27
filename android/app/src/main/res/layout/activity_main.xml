@@ -106,7 +106,7 @@
         tools:text="--" />
 
     <EditText
-        android:id="@+id/etIp"
+        android:id="@+id/keyString1"
         android:layout_width="215dp"
         android:layout_height="47dp"
         android:layout_marginLeft="8dp"
@@ -121,7 +121,21 @@
         tools:text="192.168.1.51" />
 
     <Button
-        android:id="@+id/btApply"
+        android:id="@+id/btTracker"
+        android:layout_width="201dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:onClick="showTracker"
+        android:text="Program tracker"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPlayerTitle" />
+
+
+    <Button
+        android:id="@+id/btApply2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -133,9 +147,8 @@
         android:onClick="apply"
         android:text="@string/button_carname"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/etIp"
+        app:layout_constraintStart_toEndOf="@+id/keyString1"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <TextView
         android:id="@+id/comResultDht"
@@ -160,7 +173,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/tvHum"
         app:layout_constraintEnd_toStartOf="@+id/comResultDht"
-        app:layout_constraintTop_toBottomOf="@+id/btApply" />
+        app:layout_constraintTop_toBottomOf="@+id/btTracker" />
 
 
     <TextView
@@ -205,7 +218,7 @@
         android:layout_marginTop="32dp"
         android:text="Temperature"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etIp" />
+        app:layout_constraintTop_toBottomOf="@+id/keyString1" />
 
     <TextView
         android:id="@+id/textView4"
