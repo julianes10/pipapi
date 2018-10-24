@@ -23,7 +23,7 @@ public class BackgroundTask extends IntentService {
 
     public BackgroundTask() {
         super("HelloIntentService");
-        dd=true;
+        dd=false;
         d=true;
         if (dd) Log.d("PIPAPI","Starting");
     }
@@ -53,36 +53,32 @@ public class BackgroundTask extends IntentService {
         Bundle b = intent.getExtras();
 
         String ip = b.getString("IP");
+        if (d) Log.d("PIPAPI", "Querying to ------------- " + ip + " ----·---------" + intent.getAction() + "-----------");
+
 
         if (intent.getAction().equals("REFRESH")) {
 
-            ResponseDht dht = queryDht(ip, ":5056/api/v1.0/dht/", "sensors/now", null, null);
+            ResponseDht dht = queryDht(ip, ":5056/api/v1.0/dht/", "sensors/now");
             sendResultDhtUI(dht.ok,dht.t,dht.h);
-            ResponseKodi kodi = queryKodi(ip, ":5057/api/v1.0/kodi/", "status", null, null);
+            ResponseKodi kodi = queryKodi(ip, ":5057/api/v1.0/kodi/", "status", null);
             sendResultKodiUI(kodi.ok,kodi.jsonResponse);
             //TODO queryPir(); sendResultKodiUI(kodi.ok,kodi.jsonResponse);
         }
-        else
-        {
-            //TODO
-            String rest = "";
-            String tag = "";
-            String value = "";
-            rest = b.getString("rest");
-            try {
-                tag = b.getString("tag");
-                value = b.getString("value");
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (d) Log.d("PIPAPI", "no tar or value");
-            }
+        else if (intent.getAction().equals("TRACKER")) {
+            ResponseKodi kodi = queryKodi(ip, ":5057/api/v1.0/kodi/", "tracker", b.getString("JSONDATA"));
+            kodi = queryKodi(ip, ":5057/api/v1.0/kodi/", "status", null);
+            sendResultKodiUI(kodi.ok,kodi.jsonResponse);
+        }
+        else if (intent.getAction().equals("REBOOT")) {
+            ResponseKodi kodi = queryKodi(ip, ":5057/api/v1.0/kodi/", "reboot", null);
+            //sendResultKodiUI(kodi.ok,kodi.jsonResponse);
         }
 
         if (dd) Log.d("PIPAPI", "onHandleIntent-exit");
     }
 
     //":5056/api/v1.0/dht/"
-    protected String sendQuery (String ip, String apibase, String rest, String tag, String value) {
+    protected String sendQuery (String ip, String apibase, String rest, String jsondata) {
         String rt=null;
         URL url;
         HttpURLConnection urlConnection = null;
@@ -92,7 +88,7 @@ public class BackgroundTask extends IntentService {
             // set the connection timeout to 5 seconds and the read timeout to 10 seconds
             urlConnection.setConnectTimeout(10000);
             urlConnection.setReadTimeout(15000);
-            if ((urlConnection != null) && (tag != null && !tag.isEmpty())) {
+            if ((urlConnection != null) && (jsondata != null && !jsondata.isEmpty())) {
                 // POST
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
@@ -102,16 +98,14 @@ public class BackgroundTask extends IntentService {
                 //urlConnection.setRequestProperty("Content-Length", "" + Integer.toString(otherParametersUrServiceNeed.getBytes().length));
                 urlConnection.setUseCaches(false);
                 urlConnection.connect();
-                JSONObject jsonParam = new JSONObject();
-                jsonParam.put(tag, value);
-                if (d)
-                    Log.d("PIPAPI", "POST IP:" + ip + " " + apibase + rest + " " + tag + " " + value);
+                if (dd)
+                    Log.d("PIPAPI", "POST IP:" + ip + " " + apibase + rest + " " + jsondata);
                 DataOutputStream printout = new DataOutputStream(urlConnection.getOutputStream());
-                printout.writeBytes(jsonParam.toString());
+                printout.writeBytes(jsondata);
                 printout.flush();
                 printout.close();
             } else {
-                if (d) Log.d("PIPAPI", "GET IP:" + ip + " " + rest);
+                if (dd) Log.d("PIPAPI", "GET method at :" + ip + " " + rest);
             }
 
             if (urlConnection != null) {
@@ -149,12 +143,12 @@ public class BackgroundTask extends IntentService {
     }
     protected void queryPir() {
     }
-    protected ResponseKodi queryKodi(String ip, String apibase, String rest, String tag, String value) {
+    protected ResponseKodi queryKodi(String ip, String apibase, String rest, String jsondata) {
 
         if (dd) Log.d("PIPAPI", "queryKodi");
         ResponseKodi rt=new ResponseKodi();
         try {
-            String response = this.sendQuery(ip, apibase, rest, tag, value);
+            String response = this.sendQuery(ip, apibase, rest,jsondata);
             if (response != null  && !response.equals("")) {
                 JSONObject object;
                 if (rest.contains("status")) {
@@ -173,11 +167,11 @@ public class BackgroundTask extends IntentService {
         }
         return rt;
     }
-    protected ResponseDht queryDht(String ip, String apibase, String rest, String tag, String value) {
+    protected ResponseDht queryDht(String ip, String apibase, String rest) {
         if (dd) Log.d("PIPAPI", "queryDhtr");
         ResponseDht rt=new ResponseDht();
         try {
-            String response = this.sendQuery(ip, apibase, rest, tag, value);
+            String response = this.sendQuery(ip, apibase, rest,null);
             if (response != null  && !response.equals("")) {
                 JSONObject object;
                 if (rest.contains("sensors")) {
