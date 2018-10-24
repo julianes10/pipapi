@@ -53,7 +53,7 @@ public class BackgroundTask extends IntentService {
         Bundle b = intent.getExtras();
 
         String ip = b.getString("IP");
-        if (d) Log.d("PIPAPI", "Querying to ------------- " + ip + " ----·---------" + intent.getAction() + "-----------");
+        if (d) Log.d("PIPAPI", "Querying to ------------ " + ip + " ----·---------" + intent.getAction() + "-----------");
 
 
         if (intent.getAction().equals("REFRESH")) {
