@@ -6,77 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".TrackerForm">
 
-    <Button
-        android:id="@+id/btTrackerWipe"
-        android:layout_width="257dp"
+
+    <TextView
+        android:id="@+id/tvVsw"
+        android:layout_width="232dp"
         android:layout_height="42dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="24dp"
-        android:gravity="center"
-        android:onClick="wipeTrackerContents"
-        android:text="Wipe all contents"
-        android:textColor="@color/red"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/fancytextbox"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:text="--"
+        android:textColor="@android:color/background_light"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:fontFamily="monospace"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btTrackerAdd" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="--" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="244dp"
         android:layout_height="33dp"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:text="Current events tracked:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="244dp"
-        android:layout_height="33dp"
-        android:layout_marginTop="24dp"
-        android:gravity="center"
-        android:text="New key strings to track:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etTrackerSettings"
-        tools:ignore="MissingConstraints" />
-
-    <EditText
-        android:id="@+id/tvKeyStrings"
-        android:layout_width="266dp"
-        android:layout_height="47dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="Add words separated with space"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
-
-    <Button
-        android:id="@+id/btTrackerAdd"
-        android:layout_width="136dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="16dp"
         android:gravity="center"
-        android:onClick="addTrackerContents"
-        android:text="Add content"
+        android:text="PIPAPI PI Software versions:"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvKeyStrings" />
+        app:layout_constraintTop_toBottomOf="@+id/tvVsw"
+        tools:ignore="MissingConstraints" />
 
 
     <android.support.constraint.Guideline
@@ -127,13 +92,14 @@
         app:layout_constraintGuide_begin="20dp" />
 
     <EditText
-        android:id="@+id/etTrackerSettings"
-        android:layout_width="278dp"
-        android:layout_height="99dp"
+        android:id="@+id/etVsw"
+        android:layout_width="328dp"
+        android:layout_height="338dp"
         android:layout_marginTop="8dp"
 
         android:background="@drawable/fancymultiline"
         android:inputType="textMultiLine"
+        android:scrollbars="vertical"
         android:singleLine="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

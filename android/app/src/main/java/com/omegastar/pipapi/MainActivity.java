@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.comResultKodi).setBackgroundColor(getResources().getColor(R.color.comNoaction));
         findViewById(R.id.pbComKODI).setVisibility(View.INVISIBLE);
 
-        findViewById(R.id.etTrackerSettings).setEnabled(false);
+        findViewById(R.id.etVsw).setEnabled(false);
         tvTemp=findViewById(R.id.tvTemp);
         tvHum=findViewById(R.id.tvHum);
 
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                             else {
                                 ((TextView)(findViewById(R.id.tvHdmi))).setText("NO");
                             }
-                            SharedHelper.fillEditText((EditText)(findViewById(R.id.etTrackerSettings)),json);
+                            SharedHelper.fillEditText((EditText)(findViewById(R.id.etVsw)),json);
                             latestKodiJson=json;
 
                         }
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                         ((TextView)(findViewById(R.id.tvPlayOn))).setText("--");
                         ((TextView)(findViewById(R.id.tvPlayerTitle))).setText("--");
                         ((TextView)(findViewById(R.id.tvHdmi))).setText("--");
-                        ((TextView)(findViewById(R.id.etTrackerSettings))).setText("--");
+                        ((TextView)(findViewById(R.id.etVsw))).setText("--");
                     }
 
                     updatePb(result,R.id.comResultKodi,R.id.pbComKODI);
@@ -263,6 +263,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void showVsw(View view) {
+        Intent intent = new Intent(this, VswForm.class);
+        intent.putExtra("json", latestKodiJson.toString());
+        onStop();
+        startActivity(intent);
+    }
 
 }
 

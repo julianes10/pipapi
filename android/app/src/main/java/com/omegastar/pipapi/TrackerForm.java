@@ -30,7 +30,7 @@ public class TrackerForm extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tracker);
-        findViewById(R.id.etTrackerSettings).setEnabled(false);
+        findViewById(R.id.etVsw).setEnabled(false);
 
         dd=false;
         d=true;
@@ -95,7 +95,7 @@ public class TrackerForm extends AppCompatActivity {
     }
 
     private void showTrackerInfo(JSONObject json) {
-        SharedHelper.fillEditText((EditText)(findViewById(R.id.etTrackerSettings)),json);
+        SharedHelper.fillEditText((EditText)(findViewById(R.id.etTracker)),json);
     }
 
     @Override

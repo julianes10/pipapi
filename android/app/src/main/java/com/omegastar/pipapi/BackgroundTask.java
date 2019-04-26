@@ -204,10 +204,11 @@ public class BackgroundTask extends IntentService {
         if(r){
             intent.putExtra("RESULT", "OK");
             if (d) Log.d("PIPAPI", "sendResultKodiUI:" + res );
-            intent.putExtra("JSON", res);
         }else {
             intent.putExtra("RESULT", "KO");
         }
+        intent.putExtra("JSON", res);
+
 
         sendResultUI(intent);
     }
