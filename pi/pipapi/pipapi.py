@@ -42,11 +42,18 @@ def format_datetime(value):
       helper.einternalLogger.exception(e)
     return aux 
 
+
+
+
 '''----------------------------------------------------------'''
 '''----------------      API REST         -------------------'''
 '''----------------------------------------------------------'''
 api = Flask("api",template_folder="templates",static_folder='static_pipapi')
 api.jinja_env.filters['datetime'] = format_datetime
+
+
+
+
 
 '''----------------------------------------------------------'''
 @api.route('/',methods=["GET", "POST"])
@@ -59,13 +66,17 @@ def pipapi_home():
     
     url={}
 
+    cmd="/opt/pipapi/pipapi/getImages.sh"
+    subprocess.run(['bash','-c',cmd])
+
     st=getStatus()
-    rt=render_template('index.html', title="pipapi Site",status=st)
+
+    rt=render_template('index.html', title="pipapi Site",status=st,randomhack=randint(0,100000))
     return rt
 
 '''----------------------------------------------------------'''
 @api.route('/api/v1.0/pipapi/status', methods=['GET'])
-def get_pipapi_status():
+def get_pipapi_status():  
     return json.dumps(getStatus())
 
 def getStatus():
@@ -105,6 +116,20 @@ def  getDHT():
 
 
   return rtt,rth
+
+
+'''----------------------------------------------------------'''
+def  sendEvent(event,txt):
+  try:
+    d = {"name": event, "text": txt} 
+    r = requests.post(GLB_configuration["telegram-event-query"],json = d)
+    helper.internalLogger.debug("sendEvent {0} response {1}...".format(d,r.json())) 
+  except Exception as e:
+    e = sys.exc_info()[0]
+    helper.internalLogger.warning('Error: Exception sending event')
+    helper.einternalLogger.exception(e)  
+
+
 
 
 '''----------------------------------------------------------'''
@@ -198,6 +223,14 @@ def setupDisplay():
   return oled
 
 
+
+'''----------------------------------------------------------'''
+def runCmdBackground(cmd):
+  subprocess.Popen(['bash','-c',cmd])
+  helper.internalLogger.debug("Just. Executed {0} ".format(cmd))
+  return "Action Executed in background"
+
+
 '''----------------------------------------------------------'''
 '''----------------       M A I N         -------------------'''
 '''----------------------------------------------------------'''
@@ -240,9 +273,9 @@ def main(configfile):
     import RPi.GPIO as GPIO
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(GLB_configuration["PIR-pin"], GPIO.IN) 
-    GPIO.setup(GLB_configuration["white-button-pin"], GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(GLB_configuration["red-button-pin"], GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(GLB_configuration["PIR"]["pin"], GPIO.IN) 
+    GPIO.setup(GLB_configuration["white-button"]["pin"], GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(GLB_configuration["red-button"]["pin"], GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 
 
    
@@ -259,21 +292,46 @@ def main(configfile):
 
     st = 0
     latestSecProcessed=0
+    PIRBk = False
+    bWhiteBk = False
+    bRedBk = False
     while (True):
       sec=int(time.time())
-      GLB_PIR    = GPIO.input(GLB_configuration["PIR-pin"])==1
-      GLB_bWhite = GPIO.input(GLB_configuration["white-button-pin"])==1
-      GLB_bRed   = GPIO.input(GLB_configuration["red-button-pin"])==1
+      GLB_PIR    = GPIO.input(GLB_configuration["PIR"]["pin"])==1
+      GLB_bWhite = GPIO.input(GLB_configuration["white-button"]["pin"])==1
+      GLB_bRed   = GPIO.input(GLB_configuration["red-button"]["pin"])==1
 
-      if GLB_bWhite and GLB_bRed:
-        display_text(oled,"ROJ-BLA")  
-        continue     
-      if GLB_bWhite:
-        display_text(oled,"BLANCO")  
-        continue
-      if GLB_bRed:
-        display_text(oled,"ROJO")  
-        continue
+      if GLB_bWhite != bWhiteBk and bWhiteBk==False:  
+        # Falling edge  
+        runCmdBackground(GLB_configuration["white-button"]["cmd"])
+        sendEvent("button","White button pressed")
+
+      if GLB_bRed != bRedBk and bRedBk==False: 
+        # Falling edge         
+        runCmdBackground(GLB_configuration["red-button"]["cmd"])
+        sendEvent("button","Red button pressed")
+
+      PIRBk = GLB_PIR
+      bWhiteBk = GLB_bWhite
+      bRedBk = GLB_bRed
+
+
+      try:
+        if GLB_bWhite and GLB_bRed:
+          display_text(oled,"ROJ-BLA")  
+          #TODO 
+          continue     
+        if GLB_bWhite:
+          display_text(oled,"BLANCO")  
+          continue
+        if GLB_bRed:
+          display_text(oled,"ROJO")  
+
+          continue
+      except Exception as e:
+        e = sys.exc_info()[0]
+        helper.internalLogger.debug('Error: Exception unprocessed properly. Exiting')
+        helper.einternalLogger.exception(e)  
 
 
       # simple display control  
