@@ -24,10 +24,7 @@ import requests
 
 
 
-import board
-import digitalio
-from PIL import Image, ImageDraw, ImageFont
-import adafruit_ssd1306
+
 
 
 '''----------------------------------------------------------'''
@@ -136,6 +133,12 @@ def  sendEvent(event,txt):
 def  display_clock(oled):
   # Create blank image for drawing.
 
+  if amIaPi():
+    import board
+    import digitalio
+    from PIL import Image, ImageDraw, ImageFont
+    import adafruit_ssd1306
+    
   image = Image.new("1", (oled.width, oled.height))
   draw = ImageDraw.Draw(image)
   font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 32)
@@ -158,7 +161,13 @@ def  display_clock(oled):
 '''----------------------------------------------------------'''
 def  display_temp(oled,t):
   # Create blank image for drawing.
-
+  if amIaPi():
+    import board
+    import digitalio
+    from PIL import Image, ImageDraw, ImageFont
+    import adafruit_ssd1306
+    
+    
   image = Image.new("1", (oled.width, oled.height))
   draw = ImageDraw.Draw(image)
   font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 32)
@@ -179,7 +188,13 @@ def  display_temp(oled,t):
 '''----------------------------------------------------------'''
 def  display_hum(oled,h):
   # Create blank image for drawing.
-
+  if amIaPi():
+    import board
+    import digitalio
+    from PIL import Image, ImageDraw, ImageFont
+    import adafruit_ssd1306
+    
+    
   image = Image.new("1", (oled.width, oled.height))
   draw = ImageDraw.Draw(image)
   font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 32)
@@ -201,7 +216,12 @@ def  display_hum(oled,h):
 '''----------------------------------------------------------'''
 def  display_text(oled,text):
   # Create blank image for drawing.
-
+  if amIaPi():
+    import board
+    import digitalio
+    from PIL import Image, ImageDraw, ImageFont
+    import adafruit_ssd1306
+    
   image = Image.new("1", (oled.width, oled.height))
   draw = ImageDraw.Draw(image)
   font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 32)
@@ -213,6 +233,12 @@ def  display_text(oled,text):
 
 '''----------------------------------------------------------'''
 def setupDisplay():
+
+  if amIaPi():
+    import board
+    import digitalio
+    from PIL import Image, ImageDraw, ImageFont
+    import adafruit_ssd1306
   RESET_PIN = digitalio.DigitalInOut(board.D4)
   i2c = board.I2C()
   oled = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c, addr=0x3C, reset=RESET_PIN)
@@ -236,7 +262,13 @@ def runCmdBackground(cmd):
 '''----------------------------------------------------------'''
 def main(configfile):
   print('pipapi-start -----------------------------')
-
+  
+  
+  if amIaPi():
+    import board
+    import digitalio
+    from PIL import Image, ImageDraw, ImageFont
+    import adafruit_ssd1306
 
   # Loading config file,
   # Default values
@@ -269,17 +301,17 @@ def main(configfile):
     apiRestTask.daemon = True
     apiRestTask.start()
 
+    if amIaPi():
+      import RPi.GPIO as GPIO
+      GPIO.setwarnings(False)
+      GPIO.setmode(GPIO.BCM)
+      GPIO.setup(GLB_configuration["PIR"]["pin"], GPIO.IN) 
+      GPIO.setup(GLB_configuration["white-button"]["pin"], GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+      GPIO.setup(GLB_configuration["red-button"]["pin"], GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 
-    import RPi.GPIO as GPIO
-    GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(GLB_configuration["PIR"]["pin"], GPIO.IN) 
-    GPIO.setup(GLB_configuration["white-button"]["pin"], GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(GLB_configuration["red-button"]["pin"], GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 
-
-   
-    oled=setupDisplay()
+     
+      oled=setupDisplay()
 
 
     global GLB_PIR
@@ -287,6 +319,9 @@ def main(configfile):
     global GLB_bRed
 
 
+    GLB_PIR=False
+    GLB_bWhite=False
+    GLB_bRed=False
 
     helper.internalLogger.debug("Start pooling...")  
 
@@ -296,6 +331,9 @@ def main(configfile):
     bWhiteBk = False
     bRedBk = False
     while (True):
+     if not amIaPi():
+      time.sleep(5)
+     else:
       sec=int(time.time())
       GLB_PIR    = GPIO.input(GLB_configuration["PIR"]["pin"])==1
       GLB_bWhite = GPIO.input(GLB_configuration["white-button"]["pin"])==1
